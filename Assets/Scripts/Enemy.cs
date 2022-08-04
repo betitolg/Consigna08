@@ -12,14 +12,14 @@ public class Enemy : MonoBehaviour
     [Range(1f, 10f)] public float speed=2f;
     
     enum ZombieTypes {
-        Crawler,Stalker,Rioter
+        Crawler,Rioter,LookAlways
     }
 
     [SerializeField]  ZombieTypes zombieType;
 
 
     [SerializeField]  Transform playerTransform;
-    
+    public float AxisY = 0f;
     void Start()
     {
 
@@ -39,8 +39,11 @@ public class Enemy : MonoBehaviour
             case ZombieTypes.Rioter:
                 ChasePlayer();
                 break;
-            case ZombieTypes.Stalker:
-                RotateAroundPlayer();
+            // case ZombieTypes.Stalker:
+            //     RotateAroundPlayer();
+            //     break;
+            case ZombieTypes.LookAlways:
+                LookPlayerWithLerp();
                 break;
         }
     }
@@ -64,10 +67,25 @@ public class Enemy : MonoBehaviour
     private void RotateAroundPlayer()
     {LookPlayer();
         transform.RotateAround(playerTransform.position,Vector3.up,20f*Time.deltaTime);
+        
+        
+        
+        
     }
 
     private void LookPlayer()
     {
         transform.LookAt(playerTransform);
     }
+
+    private void LookPlayerWithLerp()
+    {LookPlayer();
+        Vector3 direction = (playerTransform.position - transform.position);
+        
+            Quaternion newRotation = Quaternion.Euler(0,direction.normalized.x,0); 
+            transform.rotation= Quaternion.Lerp(transform.rotation,newRotation,1f*Time.deltaTime);
+        
+        
+    }
+
 }
